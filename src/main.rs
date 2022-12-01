@@ -2,7 +2,6 @@ use reqwest::Error;
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
-    println!("Hello, world!");
     let session_cookie = "session=53616c7465645f5f7a93bee72655ac5d5dd0251b80c13d0b1e70c999a360ce05cf6fe049f722f71ff5c7bf86df9ab556e960da9ad0b9e77c0cc9cd1856c144af";
     let client = reqwest::Client::builder().build()?;
     let res = client
@@ -19,9 +18,9 @@ async fn main() -> Result<(), Error> {
         .collect();
 
     parsed.sort_by(|a, b| b.cmp(a));
-    println!("{:?}", parsed[0]);
+    println!("Part 1: {:?}", parsed[0]);
 
     // part two
-    println!("{:?}", parsed.iter().take(3).sum::<u32>());
+    println!("Part 2: {:?}", parsed.iter().take(3).sum::<u32>());
     Ok(())
 }
