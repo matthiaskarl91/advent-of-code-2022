@@ -12,29 +12,16 @@ async fn main() -> Result<(), Error> {
         .await?
         .text()
         .await?;
-    let calorylist_per_elve: Vec<Vec<i32>> = res
-        .split("\n\n")
-        .map(|calory_per_elve| {
-            calory_per_elve
-                .split("\n")
-                .map(|calory| calory.parse().unwrap_or_default())
-                .collect()
-        })
+
+    let lines = res.split("\n\n");
+    let mut parsed: Vec<u32> = lines
+        .map(|line| line.split("\n").flat_map(|num| num.parse::<u32>()).sum())
         .collect();
 
-    let sum_calory: Vec<i32> = calorylist_per_elve
-        .clone()
-        .iter_mut()
-        .map(|calorylist| calorylist.iter().sum())
-        .collect();
+    parsed.sort_by(|a, b| b.cmp(a));
+    println!("{:?}", parsed[0]);
 
-    println!("{:?}", sum_calory.iter().max());
     // part two
-    let mut reverse = sum_calory.clone();
-    reverse.sort();
-    reverse.reverse();
-    let biggest_three = reverse[0..3].to_vec();
-    let sum_of_three: i32 = biggest_three.iter().sum();
-    println!("{:?}", sum_of_three);
+    println!("{:?}", parsed.iter().take(3).sum::<u32>());
     Ok(())
 }
