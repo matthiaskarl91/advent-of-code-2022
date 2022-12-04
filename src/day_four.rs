@@ -64,30 +64,6 @@ pub async fn day_four() -> Result<(), Error> {
             sum_overlapping
         })
         .sum();
-    let part_one: u32 = parsed_assignments
-        .iter()
-        .map(|sections| {
-            let mut sum_overlapping: u32 = 0;
-            if sections.len() > 1 {
-                let first_section = sections[0].clone();
-                let second_section = sections[1].clone();
-                let range1 = Range {
-                    start: first_section[0],
-                    end: first_section[1] + 1,
-                };
-                let range2 = Range {
-                    start: second_section[0],
-                    end: second_section[1] + 1,
-                };
-                if section_in_range(range1, second_section)
-                    || section_in_range(range2, first_section)
-                {
-                    sum_overlapping += 1;
-                }
-            }
-            sum_overlapping
-        })
-        .sum();
     let part_two: u32 = parsed_assignments
         .iter()
         .map(|sections| {
