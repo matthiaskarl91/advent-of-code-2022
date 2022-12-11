@@ -86,8 +86,10 @@ pub fn execute() {
             if let Some((size, name)) = line.split_once(" ") {
                 // println!("{}: {}", name, size);
                 let size_number: u32 = size.parse::<u32>().unwrap();
-                let node = tree.node(name, size_number);
                 let parent_node = tree.node(current_dir.last().unwrap(), 0);
+                let mut name_dir = tree.arena[parent_node].name;
+                let n = format!("{}{}", name_dir, name).clone();
+                let node = tree.node(n.as_str(), size_number);
                 tree.arena[node].parent = Some(parent_node);
                 tree.arena[parent_node].children.push(node);
             };
@@ -139,6 +141,10 @@ pub fn execute() {
 
 fn get_sum_from_node(tree: &Tree<&str>, idx: usize) -> u32 {
     let node = &tree.arena[idx];
+    println!("{:?}", node);
+    if node.children.len() == 0 {
+        return 0;
+    }
     if node.val > 0 {
         return node.val;
     }
