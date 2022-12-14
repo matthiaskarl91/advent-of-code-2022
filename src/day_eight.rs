@@ -2,8 +2,6 @@ use std::fs;
 
 use reqwest::Error;
 
-use crate::read_input::read_input;
-
 #[derive(Debug)]
 struct Tree {
     x: usize,
@@ -24,60 +22,64 @@ struct Forest {
 
 fn visible(forest: &Forest, tree: &Tree) -> bool {
     // let mut is_visible = false;
-    let is_visible = forest
+    let left_free = forest
         .data
         .iter()
-        // .filter(|t| t.x != tree.x && t.y != tree.y)
-        .any(|t| {
-            // println!("in Forest: {:?}, tree: {:?}", t, tree);
-            if t.x == tree.x && t.y == tree.y && t.height == tree.height {
-                return false;
-            } else if t.x == tree.x && t.height < tree.height {
-                // same row
-                // if t.height < tree.height {
-                // is_visible = true;
+        .filter(|t| t.x == tree.x && t.y < tree.y)
+        .all(|t| t.height < tree.height);
 
-                return true;
-                // }
-            } else if t.y == tree.y && t.height < tree.height {
-                // if t.height < tree.height {
-                // is_visible = true;
-                return true;
-                // }
-            } else {
-                return false;
-            }
-        });
-    // println!("{}", is_visible);
-    return is_visible;
+    let right_free = forest
+        .data
+        .iter()
+        .filter(|t| t.x == tree.x && t.y > tree.y)
+        .all(|t| t.height < tree.height);
+
+    let top_free = forest
+        .data
+        .iter()
+        .filter(|t| t.x < tree.x && t.y == tree.y)
+        .all(|t| t.height < tree.height);
+
+    let bottom_free = forest
+        .data
+        .iter()
+        .filter(|t| t.x > tree.x && t.y == tree.y)
+        .all(|t| t.height < tree.height);
+
+    return left_free || right_free || top_free || bottom_free;
 }
 
-// fn is_visible(forest: &Vec<Vec<usize>>, tree: &Tree) -> bool {
-//     let mut row_idx = 0;
-//     for row in forest {
-//         let mut col_idx = 0;
-//         for col in row {
-//             if tree.y == row_idx {
-//                 if col < &tree.height {
-//                     println!(
-//                         "x: {}, y: {}, height: {} vs: {:?}",
-//                         row_idx, col_idx, col, tree
-//                     );
-//                     return true;
-//                     // } else {
-//                     //     print
-//                 }
-//             }
-//             col_idx += 1;
-//         }
-//         row_idx += 1;
-//     }
+fn visible(forest: &Forest, tree: &Tree) -> bool {
+    // let mut is_visible = false;
+    let left_free = forest
+        .data
+        .iter()
+        .filter(|t| t.x == tree.x && t.y < tree.y)
+        .all(|t| t.height < tree.height);
 
-//     return true;
-// }
+    let right_free = forest
+        .data
+        .iter()
+        .filter(|t| t.x == tree.x && t.y > tree.y)
+        .all(|t| t.height < tree.height);
+
+    let top_free = forest
+        .data
+        .iter()
+        .filter(|t| t.x < tree.x && t.y == tree.y)
+        .all(|t| t.height < tree.height);
+
+    let bottom_free = forest
+        .data
+        .iter()
+        .filter(|t| t.x > tree.x && t.y == tree.y)
+        .all(|t| t.height < tree.height);
+
+    return left_free || right_free || top_free || bottom_free;
+}
 
 pub async fn execute() -> Result<(), Error> {
-    // let res = read_input("https://adventofcode.com/2022/day/8/input").await?;
+    // let mut res = read_input("https://adventofcode.com/2022/day/8/input").await?;
     let mut res = fs::read_to_string("day_eight.txt").unwrap();
     res.truncate(res.len() - 1);
     let forest_vec: Vec<Vec<i8>> = res
@@ -105,16 +107,6 @@ pub async fn execute() -> Result<(), Error> {
     }
 
     forest.data.iter().for_each(|tree| {
-        if tree.x == 0 || tree.x == forest_vec.len() - 1 {
-            // result += 0;
-            // continue;
-            return;
-        }
-        if tree.y == 0 || tree.y == forest_vec[0].len() - 1 {
-            // result += 0;
-            return;
-        }
-        println!("{:?}", tree);
         if visible(&forest, tree) {
             result += 1;
         }
@@ -123,10 +115,14 @@ pub async fn execute() -> Result<(), Error> {
     println!("Day 8");
 
     println!("Part 1: {:?} max: {}", result, forest.data.len());
-    println!("{:?}", res);
-    // part two
-    // println!("Part 2: {:?}", parsed.iter().take(3).sum::<u32>());
     Ok(())
 }
 
-// fn visible_from_left(row: Vec<usize>, tree: usize) -> bool {}
+mod test {
+    #[test]
+    fn ab() {
+        let a = 0;
+        let b = 3;
+        assert!(a + b == 3, "doof");
+    }
+}
